@@ -1,0 +1,23 @@
+FROM golang:{{ .Base.Version }}
+{{ range $key, $value := .Labels }}
+LABEL {{ $key }}="${{ $value | escapeQuote }}"
+{{ end }}
+
+RUN go get -u github.com/golang/dep/cmd/dep
+WORKDIR $GOPATH/src/app
+
+RUN git init && \
+  git remote add origin {{ .Source.Origin }} && \
+  git fetch --depth 1 origin {{ .Source.Ref }}  && \
+  git checkout FETCH_HEAD
+
+# FIXME: Can we checkout Gopkg.toml in it's own layer to improve caching?
+
+RUN test -f Gopkg.toml && dep ensure --vendor-only
+ENV CGO_ENABLED=0
+RUN go install ./...
+RUN find $GOPATH/bin
+
+# FIXME: Can we detect glibc dependency?
+FROM busybox:glibc
+COPY --from=0 /go/bin/* /usr/local/bin/
