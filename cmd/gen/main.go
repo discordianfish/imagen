@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/discordianfish/imagen"
 	"github.com/discordianfish/imagen/templates"
-	"github.com/discordianfish/imagen/templates/golang"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	data := &golang.Config{}
+	data := &imagen.Config{}
 	if err := t.Execute(os.Stdout, data); err != nil {
 		log.Fatal(err)
 	}

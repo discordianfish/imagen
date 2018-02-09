@@ -11,7 +11,6 @@ import (
 
 	"github.com/discordianfish/imagen"
 	"github.com/discordianfish/imagen/templates"
-	"github.com/discordianfish/imagen/templates/golang"
 )
 
 var (
@@ -51,13 +50,11 @@ func main() {
 func handler(t *templates.Template) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-		data := &golang.Config{
-			Config: imagen.Config{
-				Base: imagen.Base{Version: "1.9"},
-				Source: imagen.Source{
-					Origin: ps.ByName("origin")[1:], //FIXME: Why?
-					Ref:    ps.ByName("ref"),
-				},
+		data := &imagen.Config{
+			Base: imagen.Base{Version: "1.9"},
+			Source: imagen.Source{
+				Origin: ps.ByName("origin")[1:], //FIXME: Why?
+				Ref:    ps.ByName("ref"),
 			},
 		}
 
