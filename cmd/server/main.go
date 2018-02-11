@@ -21,7 +21,6 @@ var (
 func main() {
 	flag.Parse()
 	router := httprouter.New()
-	// router.GET("/", handleIndex)
 
 	dh, err := os.Open(*templateDir)
 	if err != nil {
@@ -32,6 +31,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	routes := []string{}
 	for _, dir := range dirs {
 		if !dir.IsDir() {
 			continue
@@ -42,19 +42,34 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		router.GET(path.Join("/", fname, ":ref/*origin"), handler(t))
+		p := path.Join("/", fname, ":ref/*name")
+		routes = append(routes, p)
+		router.GET(p, handler(t))
 	}
+	filename := path.Join(*templateDir, "index.tmpl")
+	t, err := templates.New(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	router.GET("/", indexHandler(t, routes))
 	log.Fatal(http.ListenAndServe(*listenAddr, router))
+}
+
+func indexHandler(t *templates.Template, routes []string) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		if err := t.Execute(w, routes); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
 }
 
 func handler(t *templates.Template) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 		data := &imagen.Config{
-			Base: imagen.Base{Version: "1.9"},
 			Source: imagen.Source{
-				Origin: ps.ByName("origin")[1:], //FIXME: Why?
-				Ref:    ps.ByName("ref"),
+				Name: ps.ByName("name")[1:], //FIXME: Why?
+				Ref:  ps.ByName("ref"),
 			},
 		}
 
