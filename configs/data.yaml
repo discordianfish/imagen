@@ -1,0 +1,33 @@
+configs:
+  - template: golang
+    labels:
+      maintainer: "@discordianfish"
+    bases:
+      - name: golang
+        refs:
+          - latest
+          - 1.9.4-stretch
+          - 1.9.4-alpine3.7
+    sources:
+      - name: github.com/discordianfish/nginx_exporter
+        refs:
+          - master
+          - v0.1.0
+      - name: github.com/discordianfish/docker-backup
+        refs:
+          - master
+      - name: github.com/discordianfish/pubgtracker_exporter
+        refs:
+          - master
+  - template: alpine
+    labels:
+      maintainer: "@discordianfish"
+    bases:
+      - name: alpine
+          - latest
+          - 3.7
+          - 3.6
+    sources:
+      - name: nginx
+        refs:
+          - 1.12.2-r4

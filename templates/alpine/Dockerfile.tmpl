@@ -1,0 +1,7 @@
+FROM alpine:{{ .Base }}
+{{ range $key, $value := .Labels }}
+LABEL {{ $key }}="${{ $value | escapeQuote }}"
+{{ end }}
+
+RUN apk add --update {{ .Source.Name }}={{ .Source.Ref }}
+USER nobody

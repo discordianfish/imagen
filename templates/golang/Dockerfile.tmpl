@@ -1,4 +1,4 @@
-FROM golang:{{ .Base.Version }}
+FROM golang:{{ .Base }}
 {{ range $key, $value := .Labels }}
 LABEL {{ $key }}="${{ $value | escapeQuote }}"
 {{ end }}
@@ -7,7 +7,7 @@ RUN go get -u github.com/golang/dep/cmd/dep
 WORKDIR $GOPATH/src/app
 
 RUN git init && \
-  git remote add origin {{ .Source.Origin }} && \
+  git remote add origin {{ .Source.Name }} && \
   git fetch --depth 1 origin {{ .Source.Ref }}  && \
   git checkout FETCH_HEAD
 

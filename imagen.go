@@ -1,16 +1,20 @@
 package imagen
 
+// Generic source definition
 type Source struct {
-	Origin string
-	Ref    string
+	Name string   `yaml:"name"` // Package name, git repo etc
+	Refs []string `yaml:"refs"` // Version, git revision etc
 }
 
-type Base struct {
-	Version string
+type Labels map[string]string
+
+type ConfigFile struct {
+	Configs []Config `json:"configs"`
 }
 
 type Config struct {
-	Base   Base
-	Source Source
-	Labels map[string]string
+	Template string   `yaml:"template"`
+	Bases    []Source `yaml:"bases"`
+	Sources  []Source `yaml:"sources"`
+	Labels   Labels   `yaml:"labels"`
 }

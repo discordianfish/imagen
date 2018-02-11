@@ -5,12 +5,32 @@ import (
 	"path"
 	"strings"
 	"text/template"
+
+	"github.com/discordianfish/imagen"
 )
 
 var funcMap = template.FuncMap{
+	"default": func(str, def string) string {
+		if str == "" {
+			return def
+		}
+		return str
+	},
 	"escapeQuote": func(str string) string {
 		return strings.Replace(str, "\"", "\\\"", -1)
 	},
+}
+
+type Data struct {
+	Base struct {
+		Name string `yaml:"name"`
+		Ref  string `yaml:"ref"`
+	}
+	Source struct {
+		Name string `yaml:"name"`
+		Ref  string `yaml:"ref"`
+	}
+	*imagen.Labels
 }
 
 type Template struct {
